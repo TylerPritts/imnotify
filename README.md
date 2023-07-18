@@ -1,6 +1,6 @@
 # Imnotify
-![GitHub all releases](https://img.shields.io/github/downloads/TylerPritts/imnotify/total)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/TylerPritts/imnotify)
+[![GitHub all releases](https://img.shields.io/github/downloads/TylerPritts/imnotify/total)](https://github.com/TylerPritts/imnotify/releases)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/TylerPritts/imnotify)](https://github.com/TylerPritts/imnotify/releases/latest)
 ![GitHub](https://img.shields.io/github/license/TylerPritts/imnotify?color=blue)
 
 

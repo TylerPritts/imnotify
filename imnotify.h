@@ -243,6 +243,7 @@ namespace ImNotify
 	NOTIFY_INLINE void RenderNotifications()
 	{
 		const auto vp_size = ImGui::GetMainViewport()->Size;
+		const auto vp_pos = ImGui::GetMainViewport()->Pos;
 
 		float height = 0.f;
 
@@ -274,7 +275,7 @@ namespace ImNotify
 
 			//PushStyleColor(ImGuiCol_Text, text_color);
 			ImGui::SetNextWindowBgAlpha(opacity);
-			ImGui::SetNextWindowPos(ImVec2(vp_size.x - NOTIFY_PADDING_X, vp_size.y - NOTIFY_PADDING_Y - height), ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+			ImGui::SetNextWindowPos(ImVec2((vp_size.x + vp_pos.x) - NOTIFY_PADDING_X, (vp_size.y + vp_pos.y) - NOTIFY_PADDING_Y - height), ImGuiCond_Always, ImVec2(1.0f, 1.0f));
 			ImGui::Begin(window_name, NULL, NOTIFY_TOAST_FLAGS);
 
 			// Here we render the toast content

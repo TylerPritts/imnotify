@@ -26,14 +26,14 @@ ImGuiIO* io = &ImGui::GetIO();
 
 ImFontConfig font_cfg;
 font_cfg.FontDataOwnedByAtlas = false;
-io->Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
+io.Fonts->AddFontFromMemoryTTF((void*)tahoma, sizeof(tahoma), 17.f, &font_cfg);
 
 // Initialize notify
-ImGui::MergeIconsWithLatestFont(16.f, false);
+ImNotify::MergeIconsWithLatestFont(16.f, false);
 
 // If you use multiple fonts, repeat the same thing!
-// io->Fonts->AddFontFromMemoryTTF((void*)another_font, sizeof(another_font), 17.f, &font_cfg);
-// ImGui::MergeIconsWithLatestFont(16.f, false);
+// io.Fonts->AddFontFromMemoryTTF((void*)another_font, sizeof(another_font), 17.f, &font_cfg);
+// ImNotify::MergeIconsWithLatestFont(16.f, false);
 ```
 ### Create notifications
 ```c++

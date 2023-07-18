@@ -10,6 +10,7 @@
 #include "font_awesome_5.h"
 #include "fa_solid_900.h"
 #include <windows.h>
+#include "imnotify_demo.cpp"
 
 
 #define NOTIFY_MAX_MSG_LENGTH			4096		// Max message content length

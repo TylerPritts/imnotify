@@ -1,23 +1,18 @@
-# imgui-notify
-Is a header-only wrapper made to create notifications with [Dear ImGui](https://github.com/ocornut/imgui). As I couldn't find any library for this I just decided to create my own. We will use [Font Awesome 5](https://fontawesome.com/) for icons.
+# Imnotify
+![GitHub all releases](https://img.shields.io/github/downloads/TylerPritts/imnotify/total)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/TylerPritts/imnotify)
+![GitHub](https://img.shields.io/github/license/TylerPritts/imnotify?color=blue)
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+
+This is a header-only wrapper made to create notifications with [Dear ImGui](https://github.com/ocornut/imgui). We will use [Font Awesome 5](https://fontawesome.com/) for icons.
+<br>All credit goes to [patrickcjk/imgui-notify](https://github.com/patrickcjk/imgui-notify) as they created the original and this is an augmentation of theirs.
+
+This was forked as to make it a submodule for OMT Studio (which isn't a repo yet)
+
 
 ## Requirements
 - You must use a font other than the default one. Font-Awesome icons used in this library cannot be merged with default font. You can use Tahoma (provided in the example project).
 - If you load the font using AddFontFromMemoryTTF (from memory, instead of from a file on disk) and memory is read-only as in the example, you must pass a ImFontConfig structure with FontDataOwnedByAtlas = false to prevent imgui from attempting to free the buffer (which will lead into a crash).
-
-## Changes in version 2
-- Toast now contains a title. If no title is provided, a default one is used (ImGuiToastType_Success will result in "Success")
-- Added getters and setters to get/set private properties
-- Added assertions
-- Constructors will only accept a content (formatting is possible), title must be set with ImGuiToast::set_title() (see example)
-- "notify" namespace was removed, we now use "ImGui" namespace for a better implementation
-- "notify::init" was removed, you must now call "ImGui::MergeIconsWithLatestFont" after EACH loaded font in your initialisation (see example)
-- "notify::render" was renamed to "ImGui::RenderNotifications()"
-- By default, NOTIFY_USE_SEPARATOR is defined which will add a separator (horizontal line) between the title and the content.
-- Now supporting multiline content (1/3 of the total view port width as max-width)
 
 ## Usage
 ### Include

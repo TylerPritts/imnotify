@@ -17,7 +17,7 @@ This was forked as to make it a submodule for OMT Studio (which isn't a repo yet
 ## Usage
 ### Include
 ```c++
-#include "src/imgui_notify.h"
+#include "imgui_notify.h"
 #include "tahoma.h" // <-- Required font!
 ```
 ### Initialisation (after impl call, e.g ImGui_ImplDX12_Init)
@@ -38,17 +38,17 @@ ImGui::MergeIconsWithLatestFont(16.f, false);
 ### Create notifications
 ```c++
 // A few examples... (no title provided, default one used!)
-ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
-ImGui::InsertNotification({ ImGuiToastType_Warning, 3000, "Hello World! This is a warning! %d", 0x1337 });
-ImGui::InsertNotification({ ImGuiToastType_Error, 3000, "Hello World! This is an error! 0x%X", 0xDEADBEEF });
-ImGui::InsertNotification({ ImGuiToastType_Info, 3000, "Hello World! This is an info!" });
-ImGui::InsertNotification({ ImGuiToastType_Info, 3000, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" });
+ImNotify::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "We can also format here:)" });
+ImNotify::InsertNotification({ ImGuiToastType_Warning, 3000, "Hello World! This is a warning! %d", 0x1337 });
+ImNotify::InsertNotification({ ImGuiToastType_Error, 3000, "Hello World! This is an error! 0x%X", 0xDEADBEEF });
+ImNotify::InsertNotification({ ImGuiToastType_Info, 3000, "Hello World! This is an info!" });
+ImNotify::InsertNotification({ ImGuiToastType_Info, 3000, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation" });
 
 // Now using a custom title...
 ImGuiToast toast(ImGuiToastType_Success, 3000); // <-- content can also be passed here as above
 toast.set_title("This is a %s title", "wonderful");
 toast.set_content("Lorem ipsum dolor sit amet");
-ImGui::InsertNotification(toast);
+ImNotify::InsertNotification(toast);
 ```
 ### Rendering
 ```c++
@@ -56,7 +56,7 @@ ImGui::InsertNotification(toast);
 // You should push style vars here
 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f); // Round borders
 ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(43.f / 255.f, 43.f / 255.f, 43.f / 255.f, 100.f / 255.f)); // Background color
-ImGui::RenderNotifications(); // <-- Here we render all notifications
+ImNotify::RenderNotifications(); // <-- Here we render all notifications
 ImGui::PopStyleVar(1); // Don't forget to Pop()
 ImGui::PopStyleColor(1);
 ```

@@ -63,6 +63,3 @@ ImGui::PopStyleColor(1);
 
 ## Showcase
 ![Showcase](https://i.imgur.com/ckcpOHJ.gif)
-
-## License
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/patrickcjk/imgui-notify/blob/main/LICENSE)

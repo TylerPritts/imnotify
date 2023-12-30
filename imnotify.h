@@ -7,14 +7,9 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <chrono>
 #include "font_awesome_5.h"
 #include "fa_solid_900.h"
-#include <windows.h>
-
-#include "imgui.h"
-
-
-
 
 #define NOTIFY_MAX_MSG_LENGTH			4096		// Max message content length
 #define NOTIFY_PADDING_X				20.f		// Bottom-left X padding
@@ -29,7 +24,7 @@
 
 #define NOTIFY_INLINE					inline
 #define NOTIFY_NULL_OR_EMPTY(str)		(!str ||! strlen(str))
-#define NOTIFY_FORMAT(fn, format, ...)	if (format) { va_list args; va_start(args, format); fn(format, args, __VA_ARGS__); va_end(args); }
+#define NOTIFY_FORMAT(fn, format, ...)	if (format) { va_list args; va_start(args, format); fn(format, args, ##__VA_ARGS__); va_end(args); }
 
 typedef int ImGuiToastType;
 typedef int ImGuiToastPhase;
@@ -95,7 +90,7 @@ public:
 
 	NOTIFY_INLINE auto get_title() -> char* { return this->title; };
 
-	NOTIFY_INLINE auto get_default_title() -> char*
+	NOTIFY_INLINE auto get_default_title() -> const char*
 	{
 		if (!strlen(this->title))
 		{
@@ -111,6 +106,8 @@ public:
 				return "Error";
 			case ImGuiToastType_Info:
 				return "Info";
+			default:
+				return NULL;
 			}
 		}
 
@@ -119,7 +116,7 @@ public:
 
 	NOTIFY_INLINE auto get_type() -> const ImGuiToastType& { return this->type; };
 
-	NOTIFY_INLINE auto get_color() -> const ImVec4&
+	NOTIFY_INLINE auto get_color() -> const ImVec4
 	{
 		switch (this->type)
 		{
@@ -133,6 +130,8 @@ public:
 			return { 255, 0, 0, 255 }; // Error
 		case ImGuiToastType_Info:
 			return { 0, 157, 255, 255 }; // Blue
+		default:
+			return { 255, 255, 255, 255 }; // White
 		}
 	}
 
@@ -150,14 +149,16 @@ public:
 			return ICON_FA_TIMES_CIRCLE;
 		case ImGuiToastType_Info:
 			return ICON_FA_INFO_CIRCLE;
+		default:
+			return NULL;
 		}
 	}
 
 	NOTIFY_INLINE auto get_content() -> char* { return this->content; };
 
-	NOTIFY_INLINE auto get_elapsed_time() { return GetTickCount64() - this->creation_time; }
+	NOTIFY_INLINE auto get_elapsed_time() { return get_tick_count() - this->creation_time; }
 
-	NOTIFY_INLINE auto get_phase() -> const ImGuiToastPhase&
+	NOTIFY_INLINE auto get_phase() -> const ImGuiToastPhase
 	{
 		const auto elapsed = get_elapsed_time();
 
@@ -196,6 +197,12 @@ public:
 		return 1.f * NOTIFY_OPACITY;
 	}
 
+	NOTIFY_INLINE static auto get_tick_count() -> const unsigned long long
+	{
+		using namespace std::chrono;
+		return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
+	}
+
 public:
 	// Constructors
 
@@ -205,7 +212,7 @@ public:
 
 		this->type = type;
 		this->dismiss_time = dismiss_time;
-		this->creation_time = GetTickCount64();
+		this->creation_time = get_tick_count();
 
 		memset(this->title, 0, sizeof(this->title));
 		memset(this->content, 0, sizeof(this->content));
@@ -216,14 +223,14 @@ public:
 	ImGuiToast(ImGuiToastType type, int dismiss_time, const char* format, ...) : ImGuiToast(type, dismiss_time) { NOTIFY_FORMAT(this->set_content, format); }
 };
 
-namespace ImNotify
+namespace ImGui
 {
 	NOTIFY_INLINE std::vector<ImGuiToast> notifications;
 
 	/// <summary>
 	/// Insert a new toast in the list
 	/// </summary>
-	NOTIFY_INLINE  void InsertNotification(const ImGuiToast& toast)
+	NOTIFY_INLINE void InsertNotification(const ImGuiToast& toast)
 	{
 		notifications.push_back(toast);
 	}
@@ -242,8 +249,7 @@ namespace ImNotify
 	/// </summary>
 	NOTIFY_INLINE void RenderNotifications()
 	{
-		const auto vp_size = ImGui::GetMainViewport()->Size;
-		const auto vp_pos = ImGui::GetMainViewport()->Pos;
+		const auto vp_size = GetMainViewport()->Size;
 
 		float height = 0.f;
 
@@ -270,17 +276,17 @@ namespace ImNotify
 			text_color.w = opacity;
 
 			// Generate new unique name for this toast
-			char window_name[50];
-			sprintf_s(window_name, "##TOAST%d", i);
+			char window_name[50]{};
+			snprintf(window_name, sizeof(window_name), "##TOAST%d", i);
 
 			//PushStyleColor(ImGuiCol_Text, text_color);
-			ImGui::SetNextWindowBgAlpha(opacity);
-			ImGui::SetNextWindowPos(ImVec2((vp_size.x + vp_pos.x) - NOTIFY_PADDING_X, (vp_size.y + vp_pos.y) - NOTIFY_PADDING_Y - height), ImGuiCond_Always, ImVec2(1.0f, 1.0f));
-			ImGui::Begin(window_name, NULL, NOTIFY_TOAST_FLAGS);
+			SetNextWindowBgAlpha(opacity);
+			SetNextWindowPos(ImVec2(vp_size.x - NOTIFY_PADDING_X, vp_size.y - NOTIFY_PADDING_Y - height), ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+			Begin(window_name, NULL, NOTIFY_TOAST_FLAGS);
 
 			// Here we render the toast content
 			{
-				ImGui::PushTextWrapPos(vp_size.x / 3.f); // We want to support multi-line text, this will wrap the text after 1/3 of the screen width
+				PushTextWrapPos(vp_size.x / 3.f); // We want to support multi-line text, this will wrap the text after 1/3 of the screen width
 
 				bool was_title_rendered = false;
 
@@ -288,7 +294,7 @@ namespace ImNotify
 				if (!NOTIFY_NULL_OR_EMPTY(icon))
 				{
 					//Text(icon); // Render icon text
-					ImGui::TextColored(text_color, icon);
+					TextColored(text_color, icon);
 					was_title_rendered = true;
 				}
 
@@ -297,24 +303,24 @@ namespace ImNotify
 				{
 					// If a title and an icon is set, we want to render on same line
 					if (!NOTIFY_NULL_OR_EMPTY(icon))
-						ImGui::SameLine();
+						SameLine();
 
-					ImGui::Text(title); // Render title text
+					Text(title); // Render title text
 					was_title_rendered = true;
 				}
 				else if (!NOTIFY_NULL_OR_EMPTY(default_title))
 				{
 					if (!NOTIFY_NULL_OR_EMPTY(icon))
-						ImGui::SameLine();
+						SameLine();
 
-					ImGui::Text(default_title); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
+					Text(default_title); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
 					was_title_rendered = true;
 				}
 
 				// In case ANYTHING was rendered in the top, we want to add a small padding so the text (or icon) looks centered vertically
 				if (was_title_rendered && !NOTIFY_NULL_OR_EMPTY(content))
 				{
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.f); // Must be a better way to do this!!!!
+					SetCursorPosY(GetCursorPosY() + 5.f); // Must be a better way to do this!!!!
 				}
 
 				// If a content is set
@@ -323,21 +329,21 @@ namespace ImNotify
 					if (was_title_rendered)
 					{
 #ifdef NOTIFY_USE_SEPARATOR
-						ImGui::Separator();
+						Separator();
 #endif
 					}
 
-					ImGui::Text(content); // Render content text
+					Text(content); // Render content text
 				}
 
-				ImGui::PopTextWrapPos();
+				PopTextWrapPos();
 			}
 
 			// Save height for next toasts
-			height += ImGui::GetWindowHeight() + NOTIFY_PADDING_MESSAGE_Y;
+			height += GetWindowHeight() + NOTIFY_PADDING_MESSAGE_Y;
 
 			// End
-			ImGui::End();
+			End();
 		}
 	}
 
@@ -354,10 +360,8 @@ namespace ImNotify
 		icons_config.PixelSnapH = true;
 		icons_config.FontDataOwnedByAtlas = FontDataOwnedByAtlas;
 
-		ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)fa_solid_900, sizeof(fa_solid_900), font_size, &icons_config, icons_ranges);
+		GetIO().Fonts->AddFontFromMemoryTTF((void*)fa_solid_900, sizeof(fa_solid_900), font_size, &icons_config, icons_ranges);
 	}
 }
-
-#include "imnotify_demo.cpp"
 
 #endif

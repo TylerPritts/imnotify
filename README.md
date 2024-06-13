@@ -7,7 +7,6 @@
 This is a header-only wrapper made to create notifications with [Dear ImGui](https://github.com/ocornut/imgui). We will use [Font Awesome 5](https://fontawesome.com/) for icons.
 <br>All credit goes to [patrickcjk/imgui-notify](https://github.com/patrickcjk/imgui-notify) as they created the original and this is an augmentation of theirs.
 
-This was forked as to make it a submodule for OMT Studio (which isn't a repo yet)
 
 
 ## Requirements
